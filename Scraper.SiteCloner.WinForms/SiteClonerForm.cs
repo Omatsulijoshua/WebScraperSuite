@@ -458,12 +458,14 @@ public class SiteClonerForm : Form
 
     private static void OpenChromeWithCdp()
     {
-        Process.Start(new ProcessStartInfo("cmd.exe", "/c start chrome --remote-debugging-port=9222")
+        var debugProfilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Google", "Chrome", "User Data Debug");
+        Process.Start(new ProcessStartInfo("cmd.exe", $"/c start chrome --remote-debugging-port=9222 --user-data-dir=\"{debugProfilePath}\"")
         {
             UseShellExecute = true,
             CreateNoWindow = true
         });
     }
+
 
     private void StopAutoScroll()
     {
