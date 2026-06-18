@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "WebScraper Pro Desktop",
+    "Projects": [
+      {
+        "Path": "Scraper.Advanced.WinForms\\Scraper.Advanced.WinForms.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Scraper.WebhookReceiver\\Scraper.WebhookReceiver.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
