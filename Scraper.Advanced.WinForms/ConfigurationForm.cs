@@ -70,7 +70,7 @@ public class ConfigurationForm : Form
         Controls.Add(buttons);
         Controls.Add(header);
 
-        _providerBox.Items.AddRange(["Gemini", "OpenAI", "NVIDIA", "Custom / Other"]);
+        _providerBox.Items.AddRange(["Gemini", "OpenAI", "Groq", "OpenRouter", "Anthropic", "xAI (Grok)", "NVIDIA", "Custom / Other"]);
         _providerBox.SelectedIndexChanged += (_, _) => OnProviderChanged();
 
         _browserBox.Items.AddRange(["Chrome", "Edge", "Firefox", "WebKit", "Chromium", "Opera", "Brave", "Vivaldi", "Running Chrome (CDP 9222)"]);
@@ -312,12 +312,32 @@ public class ConfigurationForm : Form
         var provider = _providerBox.SelectedItem?.ToString() ?? "Gemini";
         if (provider == "Gemini")
         {
-            _modelBox.Items.AddRange(["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.5-flash", "gemini-2.5-pro"]);
+            _modelBox.Items.AddRange(["gemini-2.5-flash", "gemini-2.5-pro", "gemini-1.5-flash", "gemini-1.5-pro"]);
             _modelBox.SelectedIndex = 0;
         }
         else if (provider == "OpenAI")
         {
-            _modelBox.Items.AddRange(["gpt-4o-mini", "gpt-4o"]);
+            _modelBox.Items.AddRange(["gpt-4o", "gpt-4o-mini", "o1-mini", "o3-mini", "gpt-4-turbo"]);
+            _modelBox.SelectedIndex = 0;
+        }
+        else if (provider == "Groq")
+        {
+            _modelBox.Items.AddRange(["llama-3.3-70b-specdec", "llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768", "deepseek-r1-distill-llama-70b"]);
+            _modelBox.SelectedIndex = 0;
+        }
+        else if (provider == "OpenRouter")
+        {
+            _modelBox.Items.AddRange(["google/gemini-2.5-flash", "openai/gpt-4o-mini", "anthropic/claude-3.5-sonnet", "deepseek/deepseek-chat"]);
+            _modelBox.SelectedIndex = 0;
+        }
+        else if (provider == "Anthropic")
+        {
+            _modelBox.Items.AddRange(["claude-3-5-sonnet-latest", "claude-3-5-haiku-latest", "claude-3-opus-latest"]);
+            _modelBox.SelectedIndex = 0;
+        }
+        else if (provider == "xAI (Grok)")
+        {
+            _modelBox.Items.AddRange(["grok-2-1212", "grok-beta"]);
             _modelBox.SelectedIndex = 0;
         }
         else if (provider == "NVIDIA")
@@ -393,7 +413,15 @@ public class ConfigurationForm : Form
         else
         {
             var modelIdx = _modelBox.Items.IndexOf(s.ApiModel);
-            if (modelIdx >= 0) _modelBox.SelectedIndex = modelIdx;
+            if (modelIdx >= 0)
+            {
+                _modelBox.SelectedIndex = modelIdx;
+            }
+            else if (!string.IsNullOrEmpty(s.ApiModel))
+            {
+                _modelBox.Items.Insert(0, s.ApiModel);
+                _modelBox.SelectedIndex = 0;
+            }
         }
         
         _apiKeyBox.Text = s.ApiKey;

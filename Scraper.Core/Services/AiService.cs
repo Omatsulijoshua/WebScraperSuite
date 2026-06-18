@@ -251,11 +251,190 @@ public class AiService
                     throw new Exception($"NVIDIA API response could not be parsed. Details: {ex.Message}. Raw Response: {resJson}", ex);
                 }
             }
+            else if (settings.ApiProvider.Equals("Groq", StringComparison.OrdinalIgnoreCase))
+            {
+                var modelName = string.IsNullOrEmpty(settings.ApiModel) ? "llama-3.3-70b-versatile" : settings.ApiModel;
+                var url = "https://api.groq.com/openapi/v1/chat/completions";
+                
+                var payload = new
+                {
+                    model = modelName,
+                    messages = new[]
+                    {
+                        new { role = "user", content = prompt }
+                    },
+                    response_format = new { type = "json_object" }
+                };
+                
+                using var request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Headers.Add("Authorization", $"Bearer {settings.ApiKey}");
+                request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+                
+                var response = await _httpClient.SendAsync(request, cts.Token);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errContent = await response.Content.ReadAsStringAsync(cts.Token);
+                    throw new Exception(FormatApiError("Groq", response.StatusCode, errContent));
+                }
+                
+                var resJson = await response.Content.ReadAsStringAsync(cts.Token);
+                try
+                {
+                    using var doc = JsonDocument.Parse(resJson);
+                    var text = doc.RootElement
+                        .GetProperty("choices")[0]
+                        .GetProperty("message")
+                        .GetProperty("content")
+                        .GetString();
+                        
+                    return text ?? string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Groq API response could not be parsed. Details: {ex.Message}. Raw Response: {resJson}", ex);
+                }
+            }
+            else if (settings.ApiProvider.Equals("OpenRouter", StringComparison.OrdinalIgnoreCase))
+            {
+                var modelName = string.IsNullOrEmpty(settings.ApiModel) ? "google/gemini-2.5-flash" : settings.ApiModel;
+                var url = "https://openrouter.ai/api/v1/chat/completions";
+                
+                var payload = new
+                {
+                    model = modelName,
+                    messages = new[]
+                    {
+                        new { role = "user", content = prompt }
+                    },
+                    response_format = new { type = "json_object" }
+                };
+                
+                using var request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Headers.Add("Authorization", $"Bearer {settings.ApiKey}");
+                request.Headers.Add("HTTP-Referer", "https://github.com/Omatsulijoshua/WebScraperSuite");
+                request.Headers.Add("X-Title", "WebScraper Pro");
+                request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+                
+                var response = await _httpClient.SendAsync(request, cts.Token);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errContent = await response.Content.ReadAsStringAsync(cts.Token);
+                    throw new Exception(FormatApiError("OpenRouter", response.StatusCode, errContent));
+                }
+                
+                var resJson = await response.Content.ReadAsStringAsync(cts.Token);
+                try
+                {
+                    using var doc = JsonDocument.Parse(resJson);
+                    var text = doc.RootElement
+                        .GetProperty("choices")[0]
+                        .GetProperty("message")
+                        .GetProperty("content")
+                        .GetString();
+                        
+                    return text ?? string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"OpenRouter API response could not be parsed. Details: {ex.Message}. Raw Response: {resJson}", ex);
+                }
+            }
+            else if (settings.ApiProvider.Equals("Anthropic", StringComparison.OrdinalIgnoreCase))
+            {
+                var modelName = string.IsNullOrEmpty(settings.ApiModel) ? "claude-3-5-sonnet-latest" : settings.ApiModel;
+                var url = "https://api.anthropic.com/v1/messages";
+                
+                var payload = new
+                {
+                    model = modelName,
+                    max_tokens = 4000,
+                    messages = new[]
+                    {
+                        new { role = "user", content = prompt }
+                    }
+                };
+                
+                using var request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Headers.Add("x-api-key", settings.ApiKey);
+                request.Headers.Add("anthropic-version", "2023-06-01");
+                request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+                
+                var response = await _httpClient.SendAsync(request, cts.Token);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errContent = await response.Content.ReadAsStringAsync(cts.Token);
+                    throw new Exception(FormatApiError("Anthropic", response.StatusCode, errContent));
+                }
+                
+                var resJson = await response.Content.ReadAsStringAsync(cts.Token);
+                try
+                {
+                    using var doc = JsonDocument.Parse(resJson);
+                    var text = doc.RootElement
+                        .GetProperty("content")[0]
+                        .GetProperty("text")
+                        .GetString();
+                        
+                    return text ?? string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Anthropic API response could not be parsed. Details: {ex.Message}. Raw Response: {resJson}", ex);
+                }
+            }
+            else if (settings.ApiProvider.Equals("xAI (Grok)", StringComparison.OrdinalIgnoreCase))
+            {
+                var modelName = string.IsNullOrEmpty(settings.ApiModel) ? "grok-2-1212" : settings.ApiModel;
+                var url = "https://api.x.ai/v1/chat/completions";
+                
+                var payload = new
+                {
+                    model = modelName,
+                    messages = new[]
+                    {
+                        new { role = "user", content = prompt }
+                    },
+                    response_format = new { type = "json_object" }
+                };
+                
+                using var request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Headers.Add("Authorization", $"Bearer {settings.ApiKey}");
+                request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+                
+                var response = await _httpClient.SendAsync(request, cts.Token);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errContent = await response.Content.ReadAsStringAsync(cts.Token);
+                    throw new Exception(FormatApiError("xAI (Grok)", response.StatusCode, errContent));
+                }
+                
+                var resJson = await response.Content.ReadAsStringAsync(cts.Token);
+                try
+                {
+                    using var doc = JsonDocument.Parse(resJson);
+                    var text = doc.RootElement
+                        .GetProperty("choices")[0]
+                        .GetProperty("message")
+                        .GetProperty("content")
+                        .GetString();
+                        
+                    return text ?? string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"xAI (Grok) API response could not be parsed. Details: {ex.Message}. Raw Response: {resJson}", ex);
+                }
+            }
             else if (settings.ApiProvider.Equals("Custom / Other", StringComparison.OrdinalIgnoreCase) || 
                      (!string.IsNullOrWhiteSpace(settings.CustomEndpoint) && 
                       !settings.ApiProvider.Equals("Gemini", StringComparison.OrdinalIgnoreCase) && 
                       !settings.ApiProvider.Equals("OpenAI", StringComparison.OrdinalIgnoreCase) &&
+                      !settings.ApiProvider.Equals("Groq", StringComparison.OrdinalIgnoreCase) &&
+                      !settings.ApiProvider.Equals("OpenRouter", StringComparison.OrdinalIgnoreCase) &&
+                      !settings.ApiProvider.Equals("Anthropic", StringComparison.OrdinalIgnoreCase) &&
+                      !settings.ApiProvider.Equals("xAI (Grok)", StringComparison.OrdinalIgnoreCase) &&
                       !settings.ApiProvider.Equals("NVIDIA", StringComparison.OrdinalIgnoreCase)))
+
             {
                 var url = settings.CustomEndpoint;
                 if (string.IsNullOrWhiteSpace(url))
