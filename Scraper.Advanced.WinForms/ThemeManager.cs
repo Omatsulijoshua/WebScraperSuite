@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using Scraper.Core.Models;
 using Scraper.Core.Services;
 
-namespace Scraper.Advanced.WinForms;
+namespace Scraper.Core.Services;
 
 public static class ThemeManager
 {
@@ -117,14 +117,6 @@ public static class ThemeManager
                 tabPage.ForeColor = theme.TextPrimary;
                 break;
 
-            case Panel panel:
-                // If it's a card container
-                if (panel.Padding.All >= 10 || panel.Margin.All >= 10 || panel.Height > 100)
-                {
-                    panel.BackColor = theme.CardBackground;
-                }
-                break;
-
             case TableLayoutPanel tableLayout:
                 if (tableLayout.Dock == DockStyle.Fill && tableLayout.Parent is Form)
                 {
@@ -136,6 +128,14 @@ public static class ThemeManager
                 if (flowLayout.Dock == DockStyle.Fill && flowLayout.Parent is Form)
                 {
                     flowLayout.BackColor = theme.Background;
+                }
+                break;
+
+            case Panel panel:
+                // If it's a card container
+                if (panel.Padding.All >= 10 || panel.Margin.All >= 10 || panel.Height > 100)
+                {
+                    panel.BackColor = theme.CardBackground;
                 }
                 break;
         }

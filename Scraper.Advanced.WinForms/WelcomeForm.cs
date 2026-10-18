@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Scraper.Core.Services;
 
 namespace Scraper.Advanced.WinForms;
 
