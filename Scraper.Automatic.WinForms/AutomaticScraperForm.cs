@@ -91,8 +91,10 @@ public class AutomaticScraperForm : Form
 
         var settings = SettingsService.Load();
         _autoScrollBox.Checked = settings.EnableAutoScroll;
-
         SetStatus("Ready to monitor a live page.");
+
+        ThemeManager.ThemeChanged += _ => ThemeManager.ApplyTheme(this);
+        ThemeManager.ApplyTheme(this);
     }
 
     private Control BuildLayout()

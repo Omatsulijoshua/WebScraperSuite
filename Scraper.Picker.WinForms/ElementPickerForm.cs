@@ -59,6 +59,9 @@ public class ElementPickerForm : Form
 
         Controls.Add(BuildLayout());
         Shown += async (_, _) => await InitializeBrowserAsync();
+
+        ThemeManager.ThemeChanged += _ => ThemeManager.ApplyTheme(this);
+        ThemeManager.ApplyTheme(this);
     }
 
     private Control BuildLayout()

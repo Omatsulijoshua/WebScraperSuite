@@ -1,7 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\Scraper.Core\Scraper.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Scraper.Advanced.WinForms\ThemeManager.cs" Link="ThemeManager.cs" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -78,6 +78,9 @@ public class MediaScraperForm : Form
 
         UpdatePageModeUi();
         SetStatus("Ready to scan for page media.");
+
+        ThemeManager.ThemeChanged += _ => ThemeManager.ApplyTheme(this);
+        ThemeManager.ApplyTheme(this);
     }
 
     private Control BuildLayout()
@@ -980,15 +983,7 @@ public class MediaScraperForm : Form
 
     private static void ApplyGridTheme(DataGridView grid)
     {
-        grid.BackgroundColor = Color.FromArgb(15, 23, 42);
-        grid.BorderStyle = BorderStyle.None;
-        grid.EnableHeadersVisualStyles = false;
-        grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(30, 41, 59);
-        grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-        grid.DefaultCellStyle.BackColor = Color.FromArgb(15, 23, 42);
-        grid.DefaultCellStyle.ForeColor = Color.Gainsboro;
-        grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(16, 185, 129);
-        grid.DefaultCellStyle.SelectionForeColor = Color.White;
+        ThemeManager.ApplyToGrid(grid, ThemeManager.CurrentTheme);
         grid.RowHeadersVisible = false;
         grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
     }

@@ -15,6 +15,7 @@ public class ConfigurationForm : Form
     private readonly TextBox _endpointBox = new() { PlaceholderText = "https://api.openai.com/v1/chat/completions", Dock = DockStyle.Fill };
     private readonly TextBox _folderBox = new() { Dock = DockStyle.Fill };
     private readonly ComboBox _browserBox = new() { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Fill };
+    private readonly ComboBox _themeBox = new() { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Fill };
     private readonly CheckBox _autopilotBox = new() { Text = "Enable AI Autopilot Mode (extract on load)", ForeColor = Color.White, AutoSize = true };
     private readonly CheckBox _enableAutoScrollBox = new() { Text = "Enable Auto-Scroll", ForeColor = Color.White, AutoSize = true, Checked = true };
     private readonly CheckBox _saveCsvBox = new() { Text = "Auto-save CSV", ForeColor = Color.Gainsboro, AutoSize = true, Checked = true };
@@ -74,6 +75,9 @@ public class ConfigurationForm : Form
         _providerBox.SelectedIndexChanged += (_, _) => OnProviderChanged();
 
         _browserBox.Items.AddRange(["Chrome", "Edge", "Firefox", "WebKit", "Chromium", "Opera", "Brave", "Vivaldi", "Running Chrome (CDP 9222)"]);
+
+        _themeBox.Items.AddRange(["Dark", "Light", "Midnight", "Emerald"]);
+        _themeBox.SelectedIndexChanged += (_, _) => OnThemePreviewChanged();
         
         _showHideButton.FlatAppearance.BorderSize = 0;
         _showHideButton.BackColor = Color.FromArgb(30, 41, 59);
@@ -91,6 +95,7 @@ public class ConfigurationForm : Form
         _saveButton.Click += (s, e) => SaveSettings();
 
         LoadSettings();
+        ThemeManager.ApplyTheme(this);
     }
 
     private Control BuildHeader()
@@ -135,7 +140,7 @@ public class ConfigurationForm : Form
             AutoSize = true,
             AutoSizeMode = AutoSizeMode.GrowAndShrink,
             ColumnCount = 3,
-            RowCount = 12
+            RowCount = 13
         };
         _inputsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130));
         _inputsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -147,12 +152,13 @@ public class ConfigurationForm : Form
         _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // API Key (Row 3)
         _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // Default Folder (Row 4)
         _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // Preferred Browser (Row 5)
-        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // Autopilot mode (Row 6)
-        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // Auto-Scroll checkbox (Row 7)
-        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // Max Scroll Loops (Row 8)
-        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // API Timeout (Row 9)
-        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 120)); // Options Checkboxes (Row 10)
-        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 10)); // Padding (Row 11)
+        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // UI Theme (Row 6)
+        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // Autopilot mode (Row 7)
+        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // Auto-Scroll checkbox (Row 8)
+        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // Max Scroll Loops (Row 9)
+        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38)); // API Timeout (Row 10)
+        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 120)); // Options Checkboxes (Row 11)
+        _inputsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 10)); // Padding (Row 12)
 
         // Provider Row
         _inputsLayout.Controls.Add(CreateLabel("API Provider"), 0, 0);
@@ -205,25 +211,30 @@ public class ConfigurationForm : Form
         _inputsLayout.SetColumnSpan(_browserBox, 2);
         _inputsLayout.Controls.Add(_browserBox, 1, 5);
 
+        // UI Theme Row
+        _inputsLayout.Controls.Add(CreateLabel("UI Theme"), 0, 6);
+        _inputsLayout.SetColumnSpan(_themeBox, 2);
+        _inputsLayout.Controls.Add(_themeBox, 1, 6);
+
         // Autopilot Row
-        _inputsLayout.Controls.Add(CreateLabel("Smart Autopilot"), 0, 6);
+        _inputsLayout.Controls.Add(CreateLabel("Smart Autopilot"), 0, 7);
         _inputsLayout.SetColumnSpan(_autopilotBox, 2);
-        _inputsLayout.Controls.Add(_autopilotBox, 1, 6);
+        _inputsLayout.Controls.Add(_autopilotBox, 1, 7);
 
         // Auto-Scroll Row
-        _inputsLayout.Controls.Add(CreateLabel("Auto-Scroll"), 0, 7);
+        _inputsLayout.Controls.Add(CreateLabel("Auto-Scroll"), 0, 8);
         _inputsLayout.SetColumnSpan(_enableAutoScrollBox, 2);
-        _inputsLayout.Controls.Add(_enableAutoScrollBox, 1, 7);
+        _inputsLayout.Controls.Add(_enableAutoScrollBox, 1, 8);
 
         // Max Scroll Loops Row
-        _inputsLayout.Controls.Add(CreateLabel("Max Scroll Loops"), 0, 8);
+        _inputsLayout.Controls.Add(CreateLabel("Max Scroll Loops"), 0, 9);
         _inputsLayout.SetColumnSpan(_scrollLoopsBox, 2);
-        _inputsLayout.Controls.Add(_scrollLoopsBox, 1, 8);
+        _inputsLayout.Controls.Add(_scrollLoopsBox, 1, 9);
 
         // API Timeout Row
-        _inputsLayout.Controls.Add(CreateLabel("API Timeout (sec)"), 0, 9);
+        _inputsLayout.Controls.Add(CreateLabel("API Timeout (sec)"), 0, 10);
         _inputsLayout.SetColumnSpan(_apiTimeoutBox, 2);
-        _inputsLayout.Controls.Add(_apiTimeoutBox, 1, 9);
+        _inputsLayout.Controls.Add(_apiTimeoutBox, 1, 10);
 
         // Checkbox items Panel
         var checkContainer = new Panel { Dock = DockStyle.Fill };
@@ -260,7 +271,7 @@ public class ConfigurationForm : Form
         checkContainer.Controls.Add(titleOpts);
         
         _inputsLayout.SetColumnSpan(checkContainer, 2);
-        _inputsLayout.Controls.Add(checkContainer, 1, 10);
+        _inputsLayout.Controls.Add(checkContainer, 1, 11);
 
         card.Controls.Add(_inputsLayout);
         return card;
@@ -439,15 +450,27 @@ public class ConfigurationForm : Form
 
         var browserIdx = _browserBox.Items.IndexOf(s.PreferredBrowser ?? "Chrome");
         _browserBox.SelectedIndex = browserIdx >= 0 ? browserIdx : 0;
+
+        var themeIdx = _themeBox.Items.IndexOf(s.Theme ?? "Dark");
+        _themeBox.SelectedIndex = themeIdx >= 0 ? themeIdx : 0;
+    }
+
+    private void OnThemePreviewChanged()
+    {
+        var themeName = _themeBox.SelectedItem?.ToString() ?? "Dark";
+        ThemeManager.SetTheme(themeName);
+        ThemeManager.ApplyTheme(this);
     }
 
     private void SaveSettings()
     {
         var provider = _providerBox.SelectedItem?.ToString() ?? "Gemini";
         var isCustom = provider == "Custom / Other";
+        var chosenTheme = _themeBox.SelectedItem?.ToString() ?? "Dark";
 
         var s = new ScraperSettings
         {
+            Theme = chosenTheme,
             ApiProvider = provider,
             ApiModel = isCustom ? _modelBox.Text.Trim() : (_modelBox.SelectedItem?.ToString() ?? ""),
             CustomEndpoint = isCustom ? _endpointBox.Text.Trim() : "",
@@ -468,6 +491,7 @@ public class ConfigurationForm : Form
         try
         {
             SettingsService.Save(s);
+            ThemeManager.SetTheme(s.Theme);
             _statusLabel.ForeColor = Color.LightGreen;
             _statusLabel.Text = "Settings saved successfully!";
             DialogResult = DialogResult.OK;

@@ -1,0 +1,121 @@
+name: Build & Publish Release Executables
+
+on:
+  release:
+    types: [published]
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build Windows Release Package
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore NuGet Packages
+        run: dotnet restore WebScraperSuite.sln
+
+      - name: Create Distribution Directory
+        run: New-Item -ItemType Directory -Force -Path dist/WebScraperPro
+
+      - name: Publish Main Workspace Hub (Scraper.Advanced.WinForms)
+        run: |
+          dotnet publish Scraper.Advanced.WinForms/Scraper.Advanced.WinForms.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishReadyToRun=true `
+            -o dist/WebScraperPro
+
+      - name: Publish Visual Element Picker
+        run: |
+          dotnet publish Scraper.Picker.WinForms/Scraper.Picker.WinForms.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishReadyToRun=true `
+            -o dist/WebScraperPro
+
+      - name: Publish Media Scraper
+        run: |
+          dotnet publish Scraper.Media.WinForms/Scraper.Media.WinForms.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishReadyToRun=true `
+            -o dist/WebScraperPro
+
+      - name: Publish Website Cloner
+        run: |
+          dotnet publish Scraper.SiteCloner.WinForms/Scraper.SiteCloner.WinForms.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishReadyToRun=true `
+            -o dist/WebScraperPro
+
+      - name: Publish Automatic Scraper
+        run: |
+          dotnet publish Scraper.Automatic.WinForms/Scraper.Automatic.WinForms.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishReadyToRun=true `
+            -o dist/WebScraperPro
+
+      - name: Publish Webhook Receiver (.NET)
+        run: |
+          dotnet publish Scraper.WebhookReceiver/Scraper.WebhookReceiver.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishReadyToRun=true `
+            -o dist/WebScraperPro
+
+      - name: Install Playwright Browsers in Output Directory
+        shell: pwsh
+        run: |
+          if (Test-Path "dist/WebScraperPro/playwright.ps1") {
+            pwsh dist/WebScraperPro/playwright.ps1 install chromium
+          }
+
+      - name: Create Convenience Launcher Shortcut
+        shell: pwsh
+        run: |
+          Copy-Item dist/WebScraperPro/Scraper.Advanced.WinForms.exe dist/WebScraperPro/WebScraperPro.exe -Force
+
+      - name: Compress Release Archive (ZIP)
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/WebScraperPro/* -DestinationPath dist/WebScraperSuite-Windows-x64.zip -Force
+
+      - name: Upload Release Asset to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'release'
+        with:
+          files: |
+            dist/WebScraperSuite-Windows-x64.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Build Artifact (for workflow_dispatch or manual downloads)
+        uses: actions/upload-artifact@v4
+        with:
+          name: WebScraperSuite-Windows-x64
+          path: dist/WebScraperSuite-Windows-x64.zip

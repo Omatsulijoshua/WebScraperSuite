@@ -2,6 +2,7 @@ namespace Scraper.Core.Models;
 
 public class ScraperSettings
 {
+    public string Theme { get; set; } = "Dark"; // Dark, Light, Midnight, Emerald
     public string ApiProvider { get; set; } = "Gemini"; // Gemini, OpenAI
     public string ApiModel { get; set; } = "gemini-1.5-flash"; // gemini-1.5-flash, gemini-2.5-flash, gpt-4o-mini, gpt-4o, etc.
     public string ApiKey { get; set; } = string.Empty;

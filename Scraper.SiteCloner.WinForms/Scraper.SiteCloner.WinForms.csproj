@@ -4,6 +4,10 @@
     <ProjectReference Include="..\Scraper.Core\Scraper.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Scraper.Advanced.WinForms\ThemeManager.cs" Link="ThemeManager.cs" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>

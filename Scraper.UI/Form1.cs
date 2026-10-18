@@ -1,4 +1,4 @@
-﻿using Microsoft.Web.WebView2.WinForms;
+using Microsoft.Web.WebView2.WinForms;
 using Scraper.UI.Services;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -64,7 +64,18 @@ namespace Scraper.UI
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-
+            var settings = Scraper.Core.Services.SettingsService.Load();
+            MessageBox.Show(
+                $"Current Settings:\n" +
+                $"- Theme: {settings.Theme}\n" +
+                $"- Preferred Browser: {settings.PreferredBrowser}\n" +
+                $"- API Provider: {settings.ApiProvider}\n" +
+                $"- API Model: {settings.ApiModel}\n" +
+                $"- Auto-Scroll: {settings.EnableAutoScroll}\n" +
+                $"- Output Folder: {settings.OutputFolder}",
+                "WebScraper Pro Settings",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
 
         private async void btnScrape_Click(object sender, EventArgs e)

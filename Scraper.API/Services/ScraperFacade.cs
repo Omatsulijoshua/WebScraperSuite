@@ -1,6 +1,6 @@
-﻿using Scraper.Core.Services;
+using Scraper.Core.Services;
 using Scraper.Core.Helpers;
-using Scraper.Bypass.Services;
+using Scraper.Core.Models;
 using Scraper.Bypass.Helpers;
 
 namespace Scraper.API.Services;
@@ -8,7 +8,6 @@ namespace Scraper.API.Services;
 public class ScraperFacade
 {
     private readonly HttpScraperService _http = new();
-    //private readonly PlaywrightService _js = new();
 
     public async Task<object> ScrapeAsync(string url, string selector, bool useJs)
     {
@@ -16,17 +15,38 @@ public class ScraperFacade
 
         if (useJs)
         {
-            return new
+            try
             {
-                success = false,
-                message = "JavaScript scraping temporarily disabled (Playwright not installed)"
-            };
+                await using var playwright = new PlaywrightService();
+                html = await playwright.GetHtmlAsync(url);
+            }
+            catch (Exception ex)
+            {
+                return new
+                {
+                    success = false,
+                    message = $"JavaScript scraping error: {ex.Message}. Make sure Playwright browsers are installed with 'playwright.ps1 install'."
+                };
+            }
         }
         else
-            html = await _http.GetHtmlAsync(url);
+        {
+            try
+            {
+                html = await _http.GetHtmlAsync(url);
+            }
+            catch (Exception ex)
+            {
+                return new
+                {
+                    success = false,
+                    message = $"HTTP request failed: {ex.Message}"
+                };
+            }
+        }
 
         // detect protection
-        if (Scraper.Bypass.Helpers.ProtectionDetector.IsBlocked(html))
+        if (ProtectionDetector.IsBlocked(html))
         {
             return new
             {
@@ -35,8 +55,9 @@ public class ScraperFacade
             };
         }
 
-        var parser = new HtmlParserHelper();
-        var data = parser.ExtractByXPath(html, selector);
+        var selectorHelper = new SelectorHelper();
+        var kind = (selector.StartsWith('/') || selector.StartsWith("./")) ? SelectorKind.XPath : SelectorKind.Css;
+        var data = selectorHelper.ExtractValues(html, selector, kind);
 
         return new
         {

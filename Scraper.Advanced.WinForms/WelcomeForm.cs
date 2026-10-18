@@ -14,6 +14,8 @@ public class WelcomeForm : Form
         Font = new Font("Segoe UI", 10F);
 
         Controls.Add(BuildLayout());
+        ThemeManager.ThemeChanged += _ => ThemeManager.ApplyTheme(this);
+        ThemeManager.ApplyTheme(this);
     }
 
     private Control BuildLayout()
@@ -104,6 +106,7 @@ public class WelcomeForm : Form
         {
             using var form = new ConfigurationForm();
             form.ShowDialog(this);
+            ThemeManager.ApplyTheme(this);
         };
 
         configContainer.Controls.Add(configButton);
