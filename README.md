@@ -26,19 +26,27 @@ An enterprise-grade, modular web scraping, asset harvesting, site mirroring, and
 
 ---
 
-## 📥 Download Pre-Compiled Windows Executables (.exe)
+## 📥 Download Pre-Compiled Windows Installer & Executables (.exe)
 
 > **No developer environment, command line, or .NET SDK installation required!**
 >
-> You can download the latest standalone, self-contained Windows release package directly from the GitHub Releases page:
+> Choose between the standard Windows Setup Installer wizard or the portable standalone archive:
 >
-> 🚀 **[Download Latest Release (`WebScraperSuite-Windows-x64.zip`)](https://github.com/Omatsulijoshua/WebScraperSuite/releases/latest)**
+> 🚀 **[Download Windows Setup Installer (`WebScraperSuite-Setup-v1.0.0.exe`)](https://github.com/Omatsulijoshua/WebScraperSuite/releases/latest)** *(Recommended)*
+> 📦 **[Download Portable Standalone ZIP (`WebScraperSuite-Windows-x64.zip`)](https://github.com/Omatsulijoshua/WebScraperSuite/releases/latest)**
 
-### How to Run:
-1. Go to the [Releases](https://github.com/Omatsulijoshua/WebScraperSuite/releases) page and download **`WebScraperSuite-Windows-x64.zip`** under the **Assets** section.
-2. Extract the downloaded `.zip` file into any folder on your computer (e.g., `C:\WebScraperPro`).
-3. Double-click **`WebScraperPro.exe`** (or `Scraper.Advanced.WinForms.exe`) to start the application.
-4. From the Welcome dashboard, you can open the **Advanced Deep Scraper** or click **Launch App** on any card to immediately open the **Visual Element Picker**, **Media Scraper**, **Website Cloner**, **Automatic Scraper**, or **Webhook Receiver**.
+### Installation Options:
+
+#### Option A: 1-Click Windows Setup Installer (Recommended)
+1. Download **`WebScraperSuite-Setup-v1.0.0.exe`** from the [GitHub Releases](https://github.com/Omatsulijoshua/WebScraperSuite/releases/latest) page.
+2. Double-click the downloaded setup file to launch the installation wizard.
+3. Choose your install location and select **Create a desktop shortcut**.
+4. Click **Install** — the installer will place all required components, set up Start Menu and Desktop shortcuts, and offer to launch **WebScraper Pro** immediately.
+
+#### Option B: Portable Standalone ZIP (No Installation Required)
+1. Download **`WebScraperSuite-Windows-x64.zip`** from the [GitHub Releases](https://github.com/Omatsulijoshua/WebScraperSuite/releases/latest) page.
+2. Extract the archive into any folder (e.g., `C:\WebScraperPro`).
+3. Double-click **`WebScraperPro.exe`** to start using the app immediately.
 
 ---
 
